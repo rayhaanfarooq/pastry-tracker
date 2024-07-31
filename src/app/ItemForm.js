@@ -1,28 +1,61 @@
 'use client'
-import React , { useState } from 'react';
-import { addDoc, doc, updateDoc, getDoc, collection, query } from 'firebase/firestore'
+import React , { useState, useEffect } from 'react';
+import { addDoc, doc, updateDoc, getDoc, collection, query, where, onSnapshot, getDocs } from 'firebase/firestore'
 import { db } from './firebase'
+
 
 export default function ItemForm() {
 
+    const getItem = async (name) => {
+        
+            // Create a query for the 'items' collection
+            const q = query(collection(db, "items"));
+    
+            // Fetch all documents in the collection
+            const querySnapshot = await getDocs(q);
+    
+            // Map documents to an array
+            const itemsArr = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    
+            // Check if item exists
+
+            const foundItem = itemsArr.find(item => item.name === name.toLowerCase());
+    
+            // Return true if item exists, otherwise false
+
+            if (foundItem) {
+                return {
+                    exists: true,
+                    name: foundItem.name,
+                    id: foundItem.id
+                };
+            } else {
+                return {
+                    exists: false,
+                    name: null,
+                    id: null
+                };
+            }
+    };
+    
     const [newItem, setNewItem] = useState({ name: '', quantity: '' })
 
     const addItem = async(e) => {
         e.preventDefault()
-
-
+        
         if(newItem.name === '' || newItem.quantity === 0) return
 
-        const docRef = db.collection('items').doc(newItem.name.trim().toLowerCase())
-        console.log(docRef)
-        const docSnap = await getDoc(docRef)
-        console.log(docSnap)
-        
+        const existingData = await getItem(newItem.name)
 
+        if(existingData.exists){
 
-        if(docSnap.exists()){
+            const docRef = doc(db, 'items', existingData.id)
+            const docSnap = await getDoc(docRef)
+            const currentQuantity = parseFloat(docSnap.data().quantity) || 0
+            const extraQuantity = parseFloat(newItem.quantity) || 0
+
             await updateDoc(docRef, {
-                quantity: docSnap.data().quantity + newItem.quantity
+                quantity: currentQuantity + extraQuantity
             })
         }
 
@@ -30,7 +63,6 @@ export default function ItemForm() {
             await addDoc(collection(db, 'items'), {
                 name: newItem.name.trim().toLowerCase(),
                 quantity: newItem.quantity
-    
             })
         }
 
@@ -38,7 +70,7 @@ export default function ItemForm() {
     }
 
     return (
-        <div className=" bg-slate-800 p-4 rounded-lg text-center justify-center ">
+        <div className=" bg-purple-500 p-4 rounded-lg text-center justify-center ">
 
         <form className="grid grid-cols-6 items-center">
           <input 

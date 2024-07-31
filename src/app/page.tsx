@@ -1,19 +1,28 @@
 import React from "react";
 import ItemForm from "./ItemForm"
-// import { db } from "./firebase"
+import Table from './table'
 
 
 
 export default function Home() {
 
   return (
-    <main className="text-center flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <h1 className="text-4xl p-4 text-center justify-center">
-          Pantry Tracker
-        </h1>
+    <main className="bg-blue-400 text-center flex min-h-screen flex-col items-center justify-between p-24">
+      <div className=" bg-blue-400 z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
+       
 
-        <ItemForm />
+        <div className="text-center justify-center items-center">
+           <h1 className="text-white text-4xl p-4 text-center justify-center">
+            Pantry Tracker
+           </h1>
+
+
+          <ItemForm />
+
+          <Table />
+
+
+        </div>
         
 
       </div>
