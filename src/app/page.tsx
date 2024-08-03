@@ -4,6 +4,7 @@ import Table from './table'
 
 
 
+
 export default function Home() {
 
   return (
@@ -16,15 +17,12 @@ export default function Home() {
             Pantry Tracker
            </h1>
 
-
-          <ItemForm />
-
-          <Table />
-
-
-        </div>
+         
+            <ItemForm />
         
-
+           
+         
+        </div>
       </div>
     </main>
   );

@@ -7,9 +7,16 @@ import { Box, Stack, Typography } from '@mui/material';
 export default function Table() {
     const [items, setItems ] = useState([
        
-      ])
+    ])
+
+    const [searchQuery, setSearchQuery] = useState('')
+
 
       useEffect(() => {
+        
+        if(searchQuery === '') {
+
+
         const q = query(collection(db, "items"))
     
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -25,8 +32,32 @@ export default function Table() {
     
     
         })
+
+      } else {
+
+        const q = query(collection(db, "items"))
     
-      })
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          let itemsArr = []
+    
+          querySnapshot.forEach((doc) => {
+            itemsArr.push({...doc.data(), id: doc.id})
+    
+          })
+          setItems(itemsArr.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase())))
+    
+          return () => unsubscribe();
+    
+    
+        })
+
+
+      }
+
+    
+      }, [searchQuery])
+
+    // For search, just update items aray to only include items that match the search query
     
 
     const deleteItem = async(id) => {
@@ -34,6 +65,13 @@ export default function Table() {
       }
 
     return (
+      <Box>
+      <input
+        type="text"
+        placeholder="Search"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
 
      <Stack width="800px" height="300px" spacing={2} overflow={"auto"}>
         {items.map((item, id) => (
@@ -59,23 +97,7 @@ export default function Table() {
           </Box>
         ))}
       </Stack>
+      </Box>
 
-      
-       
-
-       
-        //   <ul>
-        //     {items.map((item, id) => (
-        //       <li key={id} className="my-4 w-full flex justify-between bg-slate-950 text-white">
-        //         <div className="p-4 w-full flex justify-between">
-        //           <span className="capitalize">{item.name}</span>
-        //           <span>{item.quantity}</span>
-        //         </div>
-        //         <button onClick={() => deleteItem(item.id)} className="ml-8 p-4 border-l-2 border-slate-900 hover:bg-slate-900 w-16"> x </button>
-        //       </li>
-        //     ))}
-        //   </ul>
-           
-       
     )
 }

@@ -2,6 +2,7 @@
 import React , { useState, useEffect } from 'react';
 import { addDoc, doc, updateDoc, getDoc, collection, query, where, onSnapshot, getDocs } from 'firebase/firestore'
 import { db } from './firebase'
+import Table from './table'
 
 
 export default function ItemForm() {
@@ -97,6 +98,10 @@ export default function ItemForm() {
 
 
         </form>
+
+        <Table />
+
+
 
       </div>
     )
